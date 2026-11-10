@@ -1,2 +1,30 @@
 # effective-telegram
-a standard ANSI C CLI application that runs on windows. The app is a MCP server to connect to SQLite, that follows the full MCP specification as of the latest version. The MCP will only work locally on stdio. The executable will accept one argument that represents the full path of the SQLite database
+
+Native C MCP server for SQLite over stdio (JSON-RPC 2.0, newline-delimited transport).
+
+## Scope
+
+- Windows-native executable target (`sqlite-mcp.exe`)
+- SQLite engine statically embedded via upstream amalgamation (`vendor/sqlite3.c` + `vendor/sqlite3.h`)
+- MCP protocol compatibility for:
+  - `2026-07-28` (stateless protocol / discovery-first)
+  - `2025-11-25`, `2025-06-18`, `2025-03-26`, `2024-11-05` (legacy initialize flow)
+
+## Build (Windows, MSVC)
+
+1. Replace `vendor/sqlite3.c` and `vendor/sqlite3.h` placeholders with the official SQLite amalgamation files.
+2. Build:
+
+```bat
+build.bat build
+```
+
+Output: `build\sqlite-mcp.exe`
+
+## Run
+
+```powershell
+sqlite-mcp.exe "C:\Databases\production.db"
+```
+
+`stdout` is reserved strictly for MCP responses. Logs/diagnostics are written to `stderr`.
