@@ -22,10 +22,10 @@ Native C MCP server for SQLite over stdio (JSON-RPC 2.0, newline-delimited trans
 build-windows.bat
 ```
 
-Or with explicit preset/config folder:
+Or with explicit preset:
 
 ```bat
-build-windows.bat x64-release Release
+build-windows.bat x64-release
 ```
 
 `build.bat` remains available as a compatibility alias to the same CMake preset flow.
@@ -36,35 +36,35 @@ build-windows.bat x64-release Release
 ./build-linux.sh
 ```
 
-Or with explicit preset/config folder:
+Or with explicit preset:
 
 ```bash
-./build-linux.sh linux-release Release
+./build-linux.sh linux-release
 ```
 
 ## Output location
 
 Visual Studio and batch/script builds share the same build-root convention via CMake presets:
 
-- `out/build/<preset>/bin/<config>/sqlite-mcp[.exe]`
-- `out/build/<preset>/bin/<config>/sqlite-mcp-tool-tester[.exe]`
+- `out/build/<preset>/bin/sqlite-mcp[.exe]`
+- `out/build/<preset>/bin/sqlite-mcp-tool-tester[.exe]`
 
 Examples:
-- Windows release preset: `out/build/x64-release/bin/Release/...`
-- Linux release preset: `out/build/linux-release/bin/Release/...`
+- Windows release preset: `out/build/x64-release/bin/...`
+- Linux release preset: `out/build/linux-release/bin/...`
 
 ## Run
 
 Windows:
 
 ```powershell
-out\build\x64-release\bin\Release\sqlite-mcp.exe "C:\Databases\production.db"
+out\build\x64-release\bin\sqlite-mcp.exe "C:\Databases\production.db"
 ```
 
 Linux:
 
 ```bash
-./out/build/linux-release/bin/Release/sqlite-mcp /path/to/production.db
+./out/build/linux-release/bin/sqlite-mcp /path/to/production.db
 ```
 
 `stdout` is reserved strictly for MCP responses. Logs/diagnostics are written to `stderr`.
