@@ -1,0 +1,13 @@
+{
+  "inputs": [],
+  "servers": {
+    "sqlite-mcp-sakila": {
+      "type": "stdio",
+      "command": "C:\\sources\\effective-telegram\\out\\build\\x64-release\\bin\\sqlite-mcp.exe",
+      "args": [
+        "C:\\sources\\effective-telegram\\db\\sakila.db"
+      ],
+      "env": {}
+    }
+  }
+}
