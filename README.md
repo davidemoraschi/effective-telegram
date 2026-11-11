@@ -42,6 +42,14 @@ Or with explicit preset:
 ./build-linux.sh linux-release
 ```
 
+## CI (Linux compile check)
+
+GitHub Actions validates Linux compilation on every PR and push to `main`:
+
+- Workflow: `.github/workflows/linux-compile.yml`
+- Matrix: `gcc` and `clang`
+- Presets: `linux-debug` and `linux-release`
+
 ## Output location
 
 Visual Studio and batch/script builds share the same build-root convention via CMake presets:
