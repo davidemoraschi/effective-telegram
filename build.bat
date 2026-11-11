@@ -21,4 +21,10 @@ cl /nologo /std:c17 /W4 /O2 /D_CRT_SECURE_NO_WARNINGS /Fe:"%OUTDIR%\sqlite-mcp.e
 
 if errorlevel 1 exit /b 1
 
+cl /nologo /std:c17 /W4 /O2 /D_CRT_SECURE_NO_WARNINGS /Fe:"%OUTDIR%\sqlite-mcp-tool-tester.exe" ^
+  src\tool_tester.c
+
+if errorlevel 1 exit /b 1
+
 echo Built %OUTDIR%\sqlite-mcp.exe
+echo Built %OUTDIR%\sqlite-mcp-tool-tester.exe
