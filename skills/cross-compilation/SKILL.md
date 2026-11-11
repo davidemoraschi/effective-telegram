@@ -31,6 +31,11 @@ Keep one shared codebase that builds reproducibly on Windows and Linux, with pla
 5. **No generated artifacts in Git**
    - Ignore `out/`, `build/`, `CMakeFiles/`, `CMakeCache.txt`, `cmake_install.cmake`, `compile_commands.json`.
 
+6. **Visual Studio debug launch location**
+   - For this repository, Visual Studio CMake launch arguments are read from:
+     - `C:\sources\effective-telegram\.vs\launch.vs.json`
+   - Do not assume `launch.vs.json` at repository root when updating VS debug args.
+
 ## C/C++ language standard policy
 Use the **latest stable standard available on the target OS/toolchain**, with automatic fallback only when unsupported:
 
