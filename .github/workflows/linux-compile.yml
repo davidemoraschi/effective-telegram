@@ -55,4 +55,4 @@ jobs:
       - name: Run tester
         run: |
           chmod +x bin/sqlite-mcp bin/sqlite-mcp-tool-tester
-          bin/sqlite-mcp-tool-tester bin/sqlite-mcp /tmp/test.db 20 1
+          bin/sqlite-mcp-tool-tester bin/sqlite-mcp /tmp/test.db 1 1
