@@ -35,14 +35,30 @@ struct mcp_server {
 };
 
 static const char *tools_json =
-    "[{\"name\":\"sqlite_list_tables\",\"description\":\"List tables and views\"},"
-    "{\"name\":\"sqlite_describe_table\",\"description\":\"Describe columns for a table\"},"
-    "{\"name\":\"sqlite_query\",\"description\":\"Run read-only SQL\"},"
-    "{\"name\":\"sqlite_execute\",\"description\":\"Run INSERT/UPDATE/DELETE SQL\"},"
-    "{\"name\":\"sqlite_get_indexes\",\"description\":\"List indexes for a table\"},"
-    "{\"name\":\"sqlite_get_foreign_keys\",\"description\":\"List foreign keys for a table\"},"
-    "{\"name\":\"sqlite_database_info\",\"description\":\"Show SQLite metadata\"},"
-    "{\"name\":\"sqlite_explain_query\",\"description\":\"Run EXPLAIN QUERY PLAN\"}]";
+    "["
+    "{\"name\":\"sqlite_list_tables\",\"description\":\"List tables and views\","
+    "\"inputSchema\":{\"type\":\"object\",\"properties\":{},\"additionalProperties\":false}},"
+    "{\"name\":\"sqlite_describe_table\",\"description\":\"Describe columns for a table\","
+    "\"inputSchema\":{\"type\":\"object\",\"properties\":{\"table\":{\"type\":\"string\"}},"
+    "\"required\":[\"table\"],\"additionalProperties\":false}},"
+    "{\"name\":\"sqlite_query\",\"description\":\"Run read-only SQL\","
+    "\"inputSchema\":{\"type\":\"object\",\"properties\":{\"sql\":{\"type\":\"string\"}},"
+    "\"required\":[\"sql\"],\"additionalProperties\":false}},"
+    "{\"name\":\"sqlite_execute\",\"description\":\"Run INSERT/UPDATE/DELETE SQL\","
+    "\"inputSchema\":{\"type\":\"object\",\"properties\":{\"sql\":{\"type\":\"string\"}},"
+    "\"required\":[\"sql\"],\"additionalProperties\":false}},"
+    "{\"name\":\"sqlite_get_indexes\",\"description\":\"List indexes for a table\","
+    "\"inputSchema\":{\"type\":\"object\",\"properties\":{\"table\":{\"type\":\"string\"}},"
+    "\"required\":[\"table\"],\"additionalProperties\":false}},"
+    "{\"name\":\"sqlite_get_foreign_keys\",\"description\":\"List foreign keys for a table\","
+    "\"inputSchema\":{\"type\":\"object\",\"properties\":{\"table\":{\"type\":\"string\"}},"
+    "\"required\":[\"table\"],\"additionalProperties\":false}},"
+    "{\"name\":\"sqlite_database_info\",\"description\":\"Show SQLite metadata\","
+    "\"inputSchema\":{\"type\":\"object\",\"properties\":{},\"additionalProperties\":false}},"
+    "{\"name\":\"sqlite_explain_query\",\"description\":\"Run EXPLAIN QUERY PLAN\","
+    "\"inputSchema\":{\"type\":\"object\",\"properties\":{\"sql\":{\"type\":\"string\"}},"
+    "\"required\":[\"sql\"],\"additionalProperties\":false}}"
+    "]";
 
 static char *dup_text(const char *s) {
   size_t n = strlen(s);
@@ -150,11 +166,19 @@ static void cancel_request(mcp_server_t *s, const char *id) {
 }
 
 static char *extract_arg(const char *params_json, const char *arg_name) {
+  if (!params_json) {
+    return NULL;
+  }
+
+  char value[1024];
+  if (json_get_string_field(params_json, arg_name, value, sizeof(value))) {
+    return dup_text(value);
+  }
+
   char *args = json_get_field_json(params_json, "arguments");
   if (!args) {
     return NULL;
   }
-  char value[1024];
   if (json_get_string_field(args, arg_name, value, sizeof(value))) {
     free(args);
     return dup_text(value);
