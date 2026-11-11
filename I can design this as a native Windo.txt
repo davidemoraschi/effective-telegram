@@ -1,0 +1,210 @@
+I can design this as a native Windows application in C, with SQLite statically embedded and MCP communication exclusively over standard input/output.
+
+There are three important implementation decisions to make to avoid producing something that compiles but is not genuinely MCP-compatible.
+
+1. MCP version and compatibility
+As of November 2026, the latest MCP specification is 2026-07-28, not the older 2025-11-25 revision.
+
+This is a significant change:
+
+The latest specification uses a stateless protocol model.
+
+The old initialize / initialized handshake has been removed.
+
+Protocol version and client metadata are supplied with individual requests.
+
+server/discover provides capability discovery.
+
+Multi Round-Trip Requests replace the previous server-initiated request model.
+
+The stdio transport remains newline-delimited JSON-RPC 2.0. 
+
+Model Context Protocol （MCP）
++3
+
+I would implement compatibility as follows:
+
+Client version
+
+Server behaviour
+
+2026-07-28
+
+Modern stateless protocol
+
+2025-11-25
+
+Legacy initialization and session behaviour
+
+2025-06-18
+
+Legacy initialization and session behaviour
+
+2025-03-26
+
+Legacy initialization and session behaviour
+
+2024-11-05
+
+Legacy initialization and session behaviour
+
+The server should detect the protocol generation rather than simply assuming that an unrecognised request means an old client.
+
+2. Windows architecture
+MCP client
+
+Claude Desktop / MCP-compatible host
+
+stdin / stdout · JSON-RPC 2.0
+
+SQLite MCP Server.exe
+
+Protocol detection and MCP dispatcher
+Input thread
+
+Reads and parses requests
+
+Worker threads
+
+Execute database operations
+
+Thread-safe response writer
+SQLite C API
+SQLite database
+
+Absolute path supplied as command-line argument
+
+The executable will use Windows native threading primitives (CreateThread, events, critical sections), avoiding a dependency on an external threading library.
+
+One important distinction: stdout must contain exclusively MCP messages. Diagnostics, logging and errors go to stderr. This is mandatory for correct stdio transport behaviour. 
+
+GitHub
+
+3. One important technical constraint
+There is a small conflict between your requirements:
+
+SQLite must be embedded to produce a self-contained executable.
+
+The official SQLite amalgamation is a generated C source file containing hundreds of thousands of lines.
+
+The sensible solution is to treat SQLite's upstream source as a third-party vendor component, while enforcing your 500-line limit on every application-maintained source file.
+
+SQLite officially recommends this amalgamation approach for embedding. 
+
+SQLite
++1
+
+If the 500-line limit must also apply to the SQLite vendor source, the requirements are incompatible with embedding the full SQLite engine in the conventional way.
+
+4. Proposed project structure
+All application-maintained files will remain below 500 lines.
+
+
+text
+sqlite-mcp/
+│
+├── src/
+│   ├── main.c          // Entry point and argument validation
+│   ├── mcp.c           // Protocol detection and JSON-RPC
+│   ├── mcp.h
+│   ├── json.c          // JSON parsing and serialization
+│   ├── json.h
+│   ├── sqlite_ops.c    // Database operations
+│   ├── sqlite_ops.h
+│   ├── worker.c        // Thread pool and synchronization
+│   └── worker.h
+│
+├── vendor/
+│   ├── sqlite3.c       // Official SQLite amalgamation
+│   └── sqlite3.h
+│
+└── build.bat           // Windows compilation
+5. MCP tools to expose
+I recommend the following tools:
+
+Tool
+
+Function
+
+sqlite_list_tables
+
+List database tables and views
+
+sqlite_describe_table
+
+Retrieve table structure, columns and indexes
+
+sqlite_query
+
+Execute read-only SQL queries
+
+sqlite_execute
+
+Execute INSERT, UPDATE and DELETE
+
+sqlite_get_indexes
+
+Retrieve index definitions
+
+sqlite_get_foreign_keys
+
+Retrieve foreign-key relationships
+
+sqlite_database_info
+
+Database metadata and SQLite version
+
+sqlite_explain_query
+
+Return SQL execution plans
+
+Additionally:
+
+MCP tools/list and tools/call.
+
+MCP resources/list and resources/read where applicable.
+
+MCP prompts/list and prompts/get if useful.
+
+Protocol discovery and version negotiation.
+
+JSON-RPC error handling.
+
+Request cancellation.
+
+Structured tool results.
+
+Correct handling of notifications.
+
+Concurrent request processing.
+
+Graceful shutdown.
+
+Database writes should be explicitly separated from read-only operations. I would also implement configurable query limits and SQLite busy timeouts.
+
+6. Compilation and deployment
+The intended output:
+
+sqlite-mcp.exe
+
+Portable
+Windows 10/11 x64.
+
+MSVC / Visual Studio Community.
+
+Static SQLite integration.
+
+No external runtime DLL dependencies beyond Windows system DLLs.
+
+No installer.
+
+No configuration files required.
+
+Database location supplied at startup.
+
+Example invocation:
+
+
+powershell
+sqlite-mcp.exe "C:\Databases\production.db"
+For compatibility with Visual Studio, I recommend C17 rather than requiring C23 features. This still provides modern standard C while allowing Windows-native APIs for threading.
