@@ -1,1 +1,1 @@
-./build/linux/sqlite-mcp-tool-tester ./build/linux/sqlite-mcp /mnt/c/sources/effective-telegram/db/sakila.db
+./out/build/linux-release/bin/Release/sqlite-mcp-tool-tester ./out/build/linux-release/bin/Release/sqlite-mcp /mnt/c/sources/effective-telegram/db/sakila.db

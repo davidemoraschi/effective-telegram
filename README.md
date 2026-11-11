@@ -22,13 +22,13 @@ Native C MCP server for SQLite over stdio (JSON-RPC 2.0, newline-delimited trans
 build-windows.bat
 ```
 
-Or with explicit build directory/configuration:
+Or with explicit preset/config folder:
 
 ```bat
-build-windows.bat build\windows Release
+build-windows.bat x64-release Release
 ```
 
-`build.bat` remains available as a compatibility alias to the same CMake flow.
+`build.bat` remains available as a compatibility alias to the same CMake preset flow.
 
 ## Build (Linux)
 
@@ -36,24 +36,35 @@ build-windows.bat build\windows Release
 ./build-linux.sh
 ```
 
-Or with explicit build directory:
+Or with explicit preset/config folder:
 
 ```bash
-./build-linux.sh build/linux
+./build-linux.sh linux-release Release
 ```
+
+## Output location
+
+Visual Studio and batch/script builds share the same build-root convention via CMake presets:
+
+- `out/build/<preset>/bin/<config>/sqlite-mcp[.exe]`
+- `out/build/<preset>/bin/<config>/sqlite-mcp-tool-tester[.exe]`
+
+Examples:
+- Windows release preset: `out/build/x64-release/bin/Release/...`
+- Linux release preset: `out/build/linux-release/bin/Release/...`
 
 ## Run
 
 Windows:
 
 ```powershell
-build\windows\Release\sqlite-mcp.exe "C:\Databases\production.db"
+out\build\x64-release\bin\Release\sqlite-mcp.exe "C:\Databases\production.db"
 ```
 
 Linux:
 
 ```bash
-./build/linux/sqlite-mcp /path/to/production.db
+./out/build/linux-release/bin/Release/sqlite-mcp /path/to/production.db
 ```
 
 `stdout` is reserved strictly for MCP responses. Logs/diagnostics are written to `stderr`.

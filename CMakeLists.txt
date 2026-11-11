@@ -56,6 +56,11 @@ target_link_libraries(sqlite-mcp-tool-tester PRIVATE
 	Threads::Threads
 )
 
+set(SQLITE_MCP_RUNTIME_OUTPUT_DIR "${CMAKE_BINARY_DIR}/bin/$<CONFIG>")
+set_target_properties(sqlite-mcp sqlite-mcp-tool-tester PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY "${SQLITE_MCP_RUNTIME_OUTPUT_DIR}"
+)
+
 if(MSVC)
 	target_compile_options(sqlite-mcp PRIVATE /W4)
 	target_compile_options(sqlite-mcp-tool-tester PRIVATE /W4)
